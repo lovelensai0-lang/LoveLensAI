@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+  <!-- Define gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff6ec7"/>
+      <stop offset="100%" stop-color="#7a00ff"/>
+    </linearGradient>
+  </defs>
+  <!-- Background rectangle with gradient fill -->
+  <rect width="500" height="500" fill="url(#bgGradient)"/>
+  <!-- Heart icon using path -->
+  <path d="M250 380 l-120 -120 c-40 -40 -40 -105 0 -145 40 -40 105 -40 145 0 40 -40 105 -40 145 0 40 40 40 105 0 145l-120 120 z" fill="white"/>
+  <!-- Text "LoveLens AI" centered -->
+  <text x="250" y="460" font-size="60" font-family="Arial, Helvetica, sans-serif" fill="white" text-anchor="middle">LoveLens AI</text>
+</svg>
