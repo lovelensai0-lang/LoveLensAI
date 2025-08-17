@@ -1,164 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LoveLens AI Chat</title>
 <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f8f0fc;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-  header {
-    background: linear-gradient(90deg, #ff6ec7 0%, #7a00ff 100%);
-    color: #fff;
-    padding: 20px;
-    text-align: center;
-    font-size: 24px;
-  }
-  #chatContainer {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    background: #fff;
-  }
-  .message {
-    margin-bottom: 10px;
-    max-width: 70%;
-    padding: 12px;
-    border-radius: 12px;
-    line-height: 1.4;
-  }
-  .user {
-    background-color: #e0d6ff;
-    align-self: flex-end;
-    text-align: right;
-  }
-  .bot {
-    background-color: #f7e6ff;
-    align-self: flex-start;
-  }
-  #inputArea {
-    display: flex;
-    padding: 10px;
-    background-color: #f3f3f3;
-    border-top: 1px solid #ddd;
-  }
-  #userInput {
-    flex: 1;
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-  }
-  #sendBtn {
-    margin-left: 10px;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #f92772;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  #sendBtn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  #accessMessage {
-    text-align: center;
-    color: #b00020;
-    font-weight: bold;
-    margin-top: 10px;
-  }
+body{margin:0;font-family:Arial,sans-serif;background:#f8f0fc;display:flex;flex-direction:column;height:100vh}
+header{background:linear-gradient(90deg,#ff6ec7 0%,#7a00ff 100%);color:#fff;padding:14px 18px;font-size:20px;display:flex;align-items:center;justify-content:space-between}
+#chat{flex:1;overflow:auto;background:#fff;padding:16px}
+.msg{max-width:70%;margin:8px 0;padding:12px;border-radius:12px;line-height:1.4}
+.user{background:#e0d6ff;margin-left:auto;text-align:right}
+.bot{background:#f7e6ff}
+#bar{display:flex;gap:8px;padding:10px;background:#f3f3f3;border-top:1px solid #ddd}
+#input{flex:1;padding:10px;font-size:16px;border:1px solid #ccc;border-radius:6px}
+#send{padding:10px 16px;background:#f92772;color:#fff;border:0;border-radius:6px;cursor:pointer}
+.note{font-size:13px;color:#b00020;margin:8px 12px 0}
+a.btn{background:#fff;color:#f92772;padding:8px 14px;border-radius:18px;text-decoration:none;font-weight:700}
 </style>
-</head>
-<body>
-<header>LoveLens AI Chat</header>
-<div id="chatContainer"></div>
-<div id="accessMessage"></div>
-<div id="inputArea">
-  <input type="text" id="userInput" placeholder="Type your message..."/>
-  <button id="sendBtn">Send</button>
-</div>
+</head><body>
+<header>
+  <div>LoveLens AI Chat</div>
+  <div><a class="btn" id="buyPass" style="display:none" href="#">Buy Access Pass</a></div>
+</header>
+<div id="chat"></div>
+<div id="notice" class="note"></div>
+<div id="bar"><input id="input" placeholder="Type..."><button id="send">Send</button></div>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script>
-  const chatContainer = document.getElementById('chatContainer');
-  const userInput = document.getElementById('userInput');
-  const sendBtn = document.getElementById('sendBtn');
-  const accessMessage = document.getElementById('accessMessage');
+const chat=document.getElementById('chat'),input=document.getElementById('input'),send=document.getElementById('send');
+const notice=document.getElementById('notice');let freeCount=0,unlimited=false;
+function add(text,cls){const d=document.createElement('div');d.className='msg '+cls;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;}
+const replies=[
+ "I’m here for you ❤️ What’s on your mind?",
+ "Tell me more—I’m listening. 😊",
+ "You deserve gentleness today. What would help?",
+ "Thank you for sharing that. 💖",
+ "Let’s brighten your mood—small step together?"
+];
+function reply(){add(replies[Math.floor(Math.random()*replies.length)],'bot');}
+function canSend(){ if(unlimited) return true; freeCount++; if(freeCount<=5) return true; notice.textContent="Premium required. Click ‘Buy Access Pass’ to unlock unlimited chat."; return false;}
 
-  // Simple gating: allow 5 messages for free users
-  const maxFreeMessages = 5;
-  let messageCount = 0;
-  let hasAccess = false;
+send.onclick=()=>{const t=input.value.trim(); if(!t) return; if(!canSend()) return; add(t,'user'); input.value=''; setTimeout(reply,500);};
+input.addEventListener('keydown',e=>{if(e.key==='Enter') send.click();});
 
-  // Check for query parameter token (simulate NFT access)
-  const urlParams = new URLSearchParams(window.location.search);
-// Allow premium access if the `access=premium` flag is present or if the
-// `wallet` query parameter matches the owner's wallet address.  The
-// premiumAddress is hard‑coded for demonstration purposes.
-const premiumAddress = '0x590248b9fd32a7ab053f3a7f6ec62e981512bee4'.toLowerCase();
-
-// Check if the user manually passes ?access=premium
-if (urlParams.get('access') === 'premium') {
-  hasAccess = true;
-}
-
-// Check if a wallet address is provided and matches the premium address
-const walletParam = urlParams.get('wallet');
-if (walletParam && walletParam.toLowerCase() === premiumAddress) {
-  hasAccess = true;
-}
-
-  const responses = [
-    "I hear you ❤️ How does that make you feel?",
-    "That's interesting! Tell me more. 😊",
-    "I'm here for you. What's on your mind?",
-    "You deserve happiness. What can we do to brighten your day?",
-    "Thank you for sharing that with me. 💖",
-    "Let's think of something fun to do together!"
-  ];
-
-  function appendMessage(text, sender) {
-    const msgDiv = document.createElement('div');
-    msgDiv.classList.add('message', sender);
-    msgDiv.textContent = text;
-    chatContainer.appendChild(msgDiv);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+// Gating: real on-chain key via Unlock
+(async ()=>{
+  const cfg=await fetch('config.json').then(r=>r.json()).catch(()=>({}));
+  const LOCK=(cfg.lockAddress||'').toLowerCase();
+  const NET=cfg.network||80002;
+  const RPC=cfg.rpcUrl||'https://polygon-amoy-bor-rpc.publicnode.com';
+  // Resolve user address (either ?wallet=... or MetaMask)
+  const url=new URL(location.href); let user=(url.searchParams.get('wallet')||'').toLowerCase();
+  async function connect(){ if(!user && window.ethereum){ const acc=await ethereum.request({method:'eth_requestAccounts'}); user=(acc?.[0]||'').toLowerCase(); } return user; }
+  async function hasValidKey(addr){
+    if(!LOCK||!addr) return false;
+    const abi=['function getHasValidKey(address) view returns (bool)'];
+    const provider=new ethers.providers.JsonRpcProvider(RPC);
+    const lock=new ethers.Contract(LOCK,abi,provider);
+    try { return await lock.getHasValidKey(addr); } catch(e){ console.error(e); return false; }
   }
-
-  function botReply() {
-    const response = responses[Math.floor(Math.random() * responses.length)];
-    appendMessage(response, 'bot');
+  await connect();
+  if(await hasValidKey(user)){ unlimited=true; notice.remove(); }
+  else {
+    // Build Unlock checkout link
+    if(LOCK){
+      const paywall=encodeURIComponent(JSON.stringify({locks:{[LOCK]:{network:NET,name:'LoveLens Pass'}},title:'LoveLens AI Access',icon:location.origin+'/LoveLensAI/lovelens-logo.svg'}));
+      const redirect=encodeURIComponent(location.origin + '/LoveLensAI/chat.html');
+      const url=`https://app.unlock-protocol.com/checkout?paywallConfig=${paywall}&redirectUri=${redirect}`;
+      const buy=document.getElementById('buyPass'); buy.href=url; buy.style.display='inline-block';
+      notice.textContent="You have 5 free messages. Buy a pass to unlock unlimited.";
+    } else { notice.textContent="Pass not configured yet. Check back soon."; }
   }
-
-  function handleSend() {
-    const text = userInput.value.trim();
-    if (!text) return;
-    appendMessage(text, 'user');
-    userInput.value = '';
-
-    messageCount++;
-    if (!hasAccess && messageCount > maxFreeMessages) {
-      accessMessage.textContent = 'You\'ve reached the free message limit. Please purchase an access pass to continue chatting.';
-      userInput.disabled = true;
-      sendBtn.disabled = true;
-      return;
-    }
-
-    setTimeout(botReply, 600);
-  }
-
-  sendBtn.addEventListener('click', handleSend);
-  userInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      handleSend();
-    }
-  });
+})();
 </script>
-</body>
-</html>
+</body></html>
