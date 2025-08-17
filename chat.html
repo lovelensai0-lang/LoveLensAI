@@ -98,9 +98,21 @@
 
   // Check for query parameter token (simulate NFT access)
   const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('access') === 'premium') {
-    hasAccess = true;
-  }
+// Allow premium access if the `access=premium` flag is present or if the
+// `wallet` query parameter matches the owner's wallet address.  The
+// premiumAddress is hard‑coded for demonstration purposes.
+const premiumAddress = '0x590248b9fd32a7ab053f3a7f6ec62e981512bee4'.toLowerCase();
+
+// Check if the user manually passes ?access=premium
+if (urlParams.get('access') === 'premium') {
+  hasAccess = true;
+}
+
+// Check if a wallet address is provided and matches the premium address
+const walletParam = urlParams.get('wallet');
+if (walletParam && walletParam.toLowerCase() === premiumAddress) {
+  hasAccess = true;
+}
 
   const responses = [
     "I hear you ❤️ How does that make you feel?",
