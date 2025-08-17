@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LoveLens AI Chat</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f8f0fc;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  header {
+    background: linear-gradient(90deg, #ff6ec7 0%, #7a00ff 100%);
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+  }
+  #chatContainer {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #fff;
+  }
+  .message {
+    margin-bottom: 10px;
+    max-width: 70%;
+    padding: 12px;
+    border-radius: 12px;
+    line-height: 1.4;
+  }
+  .user {
+    background-color: #e0d6ff;
+    align-self: flex-end;
+    text-align: right;
+  }
+  .bot {
+    background-color: #f7e6ff;
+    align-self: flex-start;
+  }
+  #inputArea {
+    display: flex;
+    padding: 10px;
+    background-color: #f3f3f3;
+    border-top: 1px solid #ddd;
+  }
+  #userInput {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  #sendBtn {
+    margin-left: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #f92772;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  #sendBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  #accessMessage {
+    text-align: center;
+    color: #b00020;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+<header>LoveLens AI Chat</header>
+<div id="chatContainer"></div>
+<div id="accessMessage"></div>
+<div id="inputArea">
+  <input type="text" id="userInput" placeholder="Type your message..."/>
+  <button id="sendBtn">Send</button>
+</div>
+<script>
+  const chatContainer = document.getElementById('chatContainer');
+  const userInput = document.getElementById('userInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const accessMessage = document.getElementById('accessMessage');
+
+  // Simple gating: allow 5 messages for free users
+  const maxFreeMessages = 5;
+  let messageCount = 0;
+  let hasAccess = false;
+
+  // Check for query parameter token (simulate NFT access)
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('access') === 'premium') {
+    hasAccess = true;
+  }
+
+  const responses = [
+    "I hear you ❤️ How does that make you feel?",
+    "That's interesting! Tell me more. 😊",
+    "I'm here for you. What's on your mind?",
+    "You deserve happiness. What can we do to brighten your day?",
+    "Thank you for sharing that with me. 💖",
+    "Let's think of something fun to do together!"
+  ];
+
+  function appendMessage(text, sender) {
+    const msgDiv = document.createElement('div');
+    msgDiv.classList.add('message', sender);
+    msgDiv.textContent = text;
+    chatContainer.appendChild(msgDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+
+  function botReply() {
+    const response = responses[Math.floor(Math.random() * responses.length)];
+    appendMessage(response, 'bot');
+  }
+
+  function handleSend() {
+    const text = userInput.value.trim();
+    if (!text) return;
+    appendMessage(text, 'user');
+    userInput.value = '';
+
+    messageCount++;
+    if (!hasAccess && messageCount > maxFreeMessages) {
+      accessMessage.textContent = 'You\'ve reached the free message limit. Please purchase an access pass to continue chatting.';
+      userInput.disabled = true;
+      sendBtn.disabled = true;
+      return;
+    }
+
+    setTimeout(botReply, 600);
+  }
+
+  sendBtn.addEventListener('click', handleSend);
+  userInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      handleSend();
+    }
+  });
+</script>
+</body>
+</html>
