@@ -1,71 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LoveLens AI – Your AI Companion</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: linear-gradient(180deg, #ff7e5f 0%, #f92772 50%, #7b2ff7 100%);
-    color: #fff;
-    text-align: center;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  .logo {
-    width: 150px;
-    height: 150px;
-    margin-bottom: 20px;
-  }
-  h1 {
-    font-size: 48px;
-    margin: 10px 0;
-  }
-  p.tagline {
-    font-size: 20px;
-    margin-bottom: 40px;
-  }
-  .buttons {
-    display: flex;
-    gap: 20px;
-  }
-  .btn {
-    background-color: #fff;
-    color: #f92772;
-    padding: 15px 30px;
-    border-radius: 30px;
-    text-decoration: none;
-    font-size: 18px;
-    transition: background-color 0.2s, color 0.2s;
-  }
-  .btn:hover {
-    background-color: #f92772;
-    color: #fff;
-  }
-  footer {
-    position: absolute;
-    bottom: 10px;
-    width: 100%;
-    text-align: center;
-    font-size: 12px;
-    color: #eee;
-  }
-</style>
-</head>
-<body>
-  <img src="lovelens-logo.svg" alt="LoveLens AI Logo" class="logo"/>
-  <h1>LoveLens AI</h1>
-  <p class="tagline">Your AI Companion · Powered by Web3</p>
-  <div class="buttons">
-    <a href="chat.html" class="btn">Chat Now</a>
-    <a href="https://example.com" class="btn">Buy Access Pass</a>
-  </div>
-  <footer>© 2025 LoveLens AI. All rights reserved.</footer>
-</body>
-</html>
+<style>body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(180deg,#ff7e5f 0%,#f92772 50%,#7b2ff7 100%);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center}
+.logo{width:140px;height:140px;margin:10px auto 20px}
+h1{margin:0;font-size:44px}p{opacity:.95}
+.btns{margin-top:24px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+a.btn{background:#fff;color:#f92772;padding:12px 22px;border-radius:28px;text-decoration:none;font-weight:700}
+a.btn:hover{background:#f92772;color:#fff}
+footer{position:fixed;bottom:8px;left:0;right:0;font-size:12px;opacity:.85}</style>
+</head><body>
+<img class="logo" src="lovelens-logo.svg" alt="LoveLens AI logo">
+<h1>LoveLens AI</h1>
+<p>Your AI Companion · Powered by Web3</p>
+<div class="btns">
+  <a class="btn" href="chat.html">Chat Now</a>
+  <a class="btn" id="buyPass" href="#">Buy Access Pass</a>
+</div>
+<footer>© 2025 LoveLens AI</footer>
+<script>
+// Build Buy Access link after lock is known
+fetch('config.json').then(r=>r.json()).then(cfg=>{
+  if(!cfg.lockAddress) return;
+  const paywallConfig = encodeURIComponent(JSON.stringify({
+    locks: { [cfg.lockAddress]: { network: cfg.network, name: 'LoveLens Access Pass' } },
+    title: 'LoveLens AI Access', icon: location.origin+'/LoveLensAI/lovelens-logo.svg'
+  }));
+  const redirectUri = encodeURIComponent(location.origin + '/LoveLensAI/chat.html');
+  const url = `https://app.unlock-protocol.com/checkout?paywallConfig=${paywallConfig}&redirectUri=${redirectUri}`;
+  document.getElementById('buyPass').href = url;
+});
+</script>
+</body></html>
