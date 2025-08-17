@@ -1,37 +1,36 @@
-# LoveLens AI
-
 ![Banner](lovelens-banner.svg)
 
-<p align="center">
-  <img src="lovelens-logo.svg" width="200" alt="LoveLens AI Logo"/>
-</p>
+# LoveLens AI
 
-## Introduction
+![Logo](lovelens-logo.svg)
 
-**LoveLens AI** is your always‑available AI companion — powered by artificial intelligence and unlocked by Web3. Built with empathy and a playful spirit, LoveLens AI provides emotional support, companionship, and a touch of romance whenever you need it.
+Welcome to **LoveLens AI** — your always-available AI companion unlocked by Web3.
 
 ## Features
 
-- **Empathetic Conversations:** LoveLens AI listens and responds with care and understanding.
-- **Playful & Slightly Romantic Personality:** A fun, light‑hearted companion that brings joy and positivity.
-- **Always Available:** Accessible 24/7 through a token‑gated chatbot interface.
-- **Web3 Integration:** Unlock unlimited access with an NFT access pass on Polygon (Mumbai). Free users enjoy limited conversations.
+- Empathetic, supportive conversations with a gentle, playful tone
+- Slightly romantic flair without crossing boundaries
+- Token-gated access using [Unlock Protocol](https://unlock-protocol.com/) on the Polygon Amoy testnet
+- Free tier with limited messages; premium unlock for unlimited chat
 
 ## Mission
 
-Our mission is to blend advanced AI companionship with the empowerment of decentralized technologies. We believe in giving users control over their data, privacy, and experiences — all while providing a supportive and engaging AI companion.
+Our mission is to explore meaningful connections between humans and AI while leveraging blockchain technology to ensure fair, community-driven access. LoveLens AI demonstrates how Web3 can create sustainable, user-centric digital experiences.
 
 ## Get Started
 
-- **Chat with LoveLens AI:** [Chat Now](#) – Access the chatbot (coming soon).
-- **Get an Access Pass:** [Buy Access Pass](#) – Mint or purchase the LoveLens AI NFT pass (coming soon).
+- **Chat Now**: [Start chatting](chat.html)
+- **Buy Access Pass**: Coming soon — you will mint a LoveLens Access Pass NFT on Polygon Amoy to unlock unlimited conversations. After creating a lock with Unlock Protocol, update `config.json` with your `lockAddress` and the Buy Access button will point to the correct checkout link.
 
-Stay tuned for updates! We are working hard to launch the token‑gated chatbot, landing page, and marketplace links.
+## Setup Notes
+
+This project is deployed via GitHub Pages. To make the premium gating real:
+
+1. Use MetaMask to add Polygon Amoy (chain id `80002`) and get test MATIC.
+2. Go to the [Unlock Protocol dashboard](https://app.unlock-protocol.com/) and create a new **Lock** (NFT contract) with your chosen parameters.
+3. Copy the lock address and paste it into `config.json` under `"lockAddress"`.
+4. Commit the change and wait for GitHub Pages to redeploy. The Buy Pass links will now point to the Unlock checkout.
 
 ## Contributing
 
-LoveLens AI is an open project. We welcome suggestions, feedback, and contributions via GitHub issues and pull requests.
-
-## License
-
-This project is licensed under the MIT License.
+We welcome contributions via pull requests. Feel free to improve the UI, add features, or explore other Web3 integrations.
